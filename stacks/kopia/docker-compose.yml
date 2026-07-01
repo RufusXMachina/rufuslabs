@@ -1,0 +1,32 @@
+services:
+  kopia:
+    image: kopia/kopia:latest
+    container_name: kopia
+    user: 0:0
+    restart: unless-stopped
+    ports:
+      - 51515:51515
+    environment:
+      - TZ=America/Los_Angeles
+      - KOPIA_PASSWORD=[REDACTED]
+      - KOPIA_SERVER_USERNAME=[REDACTED]
+      - KOPIA_SERVER_PASSWORD=[REDACTED]
+    volumes:
+      - ./kopia_config:/app/config
+      - ./kopia_cache:/app/cache
+      # Core System Configurations
+      - /etc:/source/ubuntu_etc:ro
+      # Main Docker Compose Stacks Folder
+      - /opt/stacks:/source/opt_stacks:ro
+      # Personal Home Docker Folder
+      - /home/steve/docker:/source/docker_stacks
+      # NAS Backup Destination
+      - /mnt/synology/Backups/Elitedesk:/nas_backup
+    entrypoint:
+      - /bin/kopia
+      - server
+      - start
+      - --address=0.0.0.0:51515
+      - --insecure
+      - --disable-csrf-token-checks
+networks: {}
