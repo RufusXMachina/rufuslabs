@@ -9,9 +9,8 @@ We use Kopia to create encrypted, deduplicated snapshots of our core system and 
 - `/source/ubuntu_etc`: Contains critical system-level configuration files (the "brain" of the OS).
 
 ### Destination/Target
-- The Kopia repository is stored on the Synology NAS (10.0.0.100).
+- The duplicati repository is stored on the Synology NAS (10.0.0.100).
 
 ### Restore Procedure
-1. Install Kopia on the new system.
+1. Install duplicati
 2. Connect to the repository on the Synology NAS.
-3. Use `kopia restore <snapshot-id> <target-path>` to recover data.
