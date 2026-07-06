@@ -1,0 +1,17 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: host
+    environment:
+      TZ: America/Los_Angeles
+      WEBPASSWORD: Rufuspants004!!
+      FTLCONF_webserver_api_password: Rufuspants004!!
+      DNSMASQ_LISTENING: local
+      FTLCONF_dns_listeningMode: single
+      FTLCONF_dns_interface: eno1
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+    restart: unless-stopped
+networks: {}
