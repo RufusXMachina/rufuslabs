@@ -1,0 +1,91 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=[REDACTED]
+      - WIREGUARD_ADDRESSES=[REDACTED]
+      - WIREGUARD_PUBLIC_KEY=[REDACTED]
+      - VPN_ENDPOINT_IP=[REDACTED]
+      - VPN_ENDPOINT_PORT=[REDACTED]
+      - WIREGUARD_MTU=1390
+      - HTTPPROXY=on
+      - TZ=America/Los_Angeles
+      - FIREWALL_OUTBOUND_SUBNETS=[REDACTED]
+      - FIREWALL_INPUT_PORTS=8080,8191,9696,8888,6246,8081,6882,8084,3000,32400,22
+    ports:
+      - 8080:8080
+      - 9999:8081
+      - 8191:8191
+      - 9696:9696
+      - 8888:8888
+      - 6246:6246
+      - 6881:6881
+      - 6881:6881/udp
+      - 6882:6882
+      - 6882:6882/udp
+    networks:
+      - media_network
+    restart: unless-stopped
+  qbittorrent:
+    image: ghcr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - WEBUI_PORT=8080
+    volumes:
+      - ./config/qbittorrent:/config
+      - /mnt/media/data/media/Downloads:/data/downloads
+      - /mnt/media/data/media/Movies:/data/movies
+      - /mnt/media/data/media/Comedy:/data/comedy
+    restart: unless-stopped
+  qbittorrent-private:
+    image: ghcr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent-private
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - WEBUI_PORT=8081
+    volumes:
+      - ./config/qbit-private:/config
+      - /mnt/media/data/media/Downloads:/data/downloads
+      - /mnt/media/data/media/Movies:/data/movies
+      - /mnt/media/data/media/Comedy:/data/comedy
+    restart: unless-stopped
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    network_mode: service:gluetun
+    volumes:
+      - ./config/prowlarr:/config
+    restart: unless-stopped
+  byparr:
+    image: ghcr.io/thephaseless/byparr:latest
+    container_name: byparr
+    network_mode: service:gluetun
+    environment:
+      - TZ=America/Los_Angeles
+      - PORT=8191
+    restart: unless-stopped
+  maintainerr:
+    image: ghcr.io/maintainerr/maintainerr:latest
+    container_name: maintainerr
+    network_mode: service:gluetun
+    user: 1000:1000
+    volumes:
+      - ./config/maintainerr:/opt/data
+    restart: unless-stopped
+networks:
+  media_network:
+    external: true
