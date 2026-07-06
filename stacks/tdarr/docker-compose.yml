@@ -1,0 +1,54 @@
+services:
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    networks:
+      - media_network
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - 8265:8265 # Web UI
+      - 8266:8266 # Server port
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=false
+    volumes:
+      - ./config:/app/server
+      - ./configs:/app/configs
+      - ./logs:/app/logs
+      - /mnt/media/data/temp/tdarr_cache:/temp
+      - /mnt/media/data/media:/media
+    restart: unless-stopped
+  tdarr-node:
+    image: ghcr.io/haveagitgat/tdarr_node:latest
+    container_name: tdarr-node
+    networks:
+      - media_network
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "993"
+      - "44"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - nodeName=WorkerNode-01
+      - serverIP=tdarr
+      - serverPort=8266
+      - LIBVA_DRIVER_NAME=iHD
+    volumes:
+      - ./configs:/app/configs
+      - ./logs:/app/logs
+      - /mnt/media/data/temp/tdarr_cache:/temp
+      - /mnt/media/data/media:/media
+    restart: unless-stopped
+networks:
+  media_network:
+    external: true
