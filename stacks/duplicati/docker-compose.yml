@@ -1,0 +1,20 @@
+services:
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    restart: unless-stopped
+    ports:
+      - 8200:8200
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - DUPLICATI__WEBSERVICE_PASSWORD=Rufuspants004!!
+      - SETTINGS_ENCRYPTION_KEY=YoMamaGot1Tooth
+    volumes:
+      - ./duplicati_config:/config
+      - /etc:/source/ubuntu_etc:ro
+      - /opt/stacks:/source/opt_stacks:ro
+      - /home/steve/docker:/source/docker_stacks:ro
+      - /mnt/synology/backups/Elitedesk:/backups
+networks: {}
