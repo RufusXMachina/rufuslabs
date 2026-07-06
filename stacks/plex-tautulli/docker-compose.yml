@@ -1,0 +1,37 @@
+services:
+  plex:
+    image: ghcr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - VERSION=docker
+    volumes:
+      - ./config/plex:/config
+      - /mnt/media/data/media/Movies:/data/movies
+      - /mnt/media/data/media/TV:/data/tv
+      - /mnt/media/data/media/Adult:/data/adult
+      - /mnt/media/data/media/Music:/data/music
+      - /mnt/media/data/media/Comedy:/data/comedy
+      - /mnt/media/data/media/Anime:/data/anime
+      - /mnt/media/data/media/DVR_Recordings:/data/dvr
+      - /mnt/media/data/media/BathauerTV:/data/bathauertv
+      - /mnt/media/data/media/BathauerMovies:/data/bathauermovies
+      - /mnt/media/data/media/YouTube:/data/youtube
+      - ./xmltv:/data/xmltv:ro
+    restart: unless-stopped
+  tautulli:
+    image: ghcr.io/tautulli/tautulli:latest
+    container_name: tautulli
+    ports:
+      - 8181:8181
+    volumes:
+      - ./config/tautulli:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    restart: unless-stopped
+networks: {}
