@@ -1,0 +1,168 @@
+services:
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    networks:
+      - media_network
+    ports:
+      - 5055:5055
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/seerr:/app/config
+    init: true
+    restart: unless-stopped
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    networks:
+      - media_network
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/sonarr:/config
+      - /mnt/media/data/media/TV:/data/tv
+      - /mnt/media/data/media/Anime:/data/anime
+      - /mnt/media/data/media/Downloads:/data/downloads
+      - /mnt/media/data/media/BathauerTV:/data/bathauertv
+    restart: unless-stopped
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    container_name: radarr
+    networks:
+      - media_network
+    ports:
+      - 7878:7878
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/radarr:/config
+      - /mnt/media/data/media/Movies:/data/movies
+      - /mnt/media/data/media/Comedy:/data/comedy
+      - /mnt/media/data/media/Downloads:/data/downloads
+      - /mnt/media/data/media/BathauerMovies:/data/bathauermovies
+    restart: unless-stopped
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: shelfmark
+    networks:
+      - media_network
+    ports:
+      - 8192:8084
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/shelfmark:/app/config
+      - /mnt/media/data/media/Books:/data/books
+      - /mnt/media/data/media/Books/Audiobooks:/data/audiobooks
+      - /mnt/media/data/media/Downloads:/data/downloads
+    restart: unless-stopped
+  kavita:
+    image: jvmilazz0/kavita:latest
+    container_name: kavita
+    networks:
+      - media_network
+    ports:
+      - 5005:5000
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/kavita:/kavita/config
+      - /mnt/media/data/media/Books:/books:ro
+    restart: unless-stopped
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    networks:
+      - media_network
+    ports:
+      - 13378:80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/media/data/media/Books/Audiobooks:/audiobooks
+      - ./config/audiobookshelf:/config
+      - ./config/audiobookshelf/metadata:/metadata
+    restart: unless-stopped
+  whisparr:
+    image: ghcr.io/hotio/whisparr:latest
+    container_name: whisparr
+    networks:
+      - media_network
+    ports:
+      - 6969:6969
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/whisparr:/config
+      - /mnt/media/data/media/Adult:/data/adult
+      - /mnt/media/data/media/Downloads:/data/downloads
+    restart: unless-stopped
+  lidarr:
+    image: ghcr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    networks:
+      - media_network
+    ports:
+      - 8686:8686
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/lidarr:/config
+      - /mnt/media/data/media/Music:/data/music
+      - /mnt/media/data/media/Downloads:/data/downloads
+    restart: unless-stopped
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    networks:
+      - media_network
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/bazarr:/config
+      - /mnt/media/data/media/TV:/data/tv
+      - /mnt/media/data/media/Movies:/data/movies
+      - /mnt/media/data/media/Comedy:/data/comedy
+      - /mnt/media/data/media/Anime:/data/anime
+    restart: unless-stopped
+  chucklarr:
+    build: https://github.com/mscodemonkey/Chucklarr.git
+    container_name: chucklarr
+    networks:
+      - media_network
+    ports:
+      - 7070:3333 # <--- Changed this from 7070:7070
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config/chucklarr:/config
+      - /mnt/media/data/media/Comedy:/data/comedy
+    restart: unless-stopped
+networks:
+  media_network:
+    external: true
