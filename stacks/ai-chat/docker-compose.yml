@@ -5,6 +5,9 @@ services:
     restart: unless-stopped
     ports:
       - "11434:11434"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     volumes:
       - ./ollama:/root/.ollama
     environment:
@@ -13,6 +16,7 @@ services:
       resources:
         limits:
           memory: 6G
+          cpus: '3.0'
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
