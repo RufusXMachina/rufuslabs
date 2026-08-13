@@ -33,6 +33,13 @@ services:
     networks:
       - media_network
     restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
@@ -48,6 +55,12 @@ services:
       - /mnt/media/data/media/Movies:/data/movies
       - /mnt/media/data/media/Comedy:/data/comedy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   qbittorrent-private:
     image: ghcr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent-private
@@ -63,6 +76,12 @@ services:
       - /mnt/media/data/media/Movies:/data/movies
       - /mnt/media/data/media/Comedy:/data/comedy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
