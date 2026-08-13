@@ -1,0 +1,20 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    networks:
+      - media_network
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "3089:3001"
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      - /opt/stacks/uptime-kuma/data:/app/data
+
+networks:
+  media_network:
+    external: true
