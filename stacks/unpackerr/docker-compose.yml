@@ -1,0 +1,16 @@
+services:
+  unpackerr:
+    image: ghcr.io/unpackerr/unpackerr:latest
+    container_name: unpackerr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      # Replace http://YOUR_LIDARR_IP:8686 with your actual Lidarr container name or local IP/port
+      - UNPACKERR_LIDARR_0_URL=http://lidarr:8686
+      - UNPACKERR_LIDARR_0_API_KEY=f1a8bd6f67da4ccdb172ecfcbfb80628
+      - UNPACKERR_LIDARR_0_PATHS_0=/data/downloads/music-public
+      - UNPACKERR_LIDARR_0_PATHS_0=/data/downloads/music-private
+    volumes:
+      - /mnt/media/data:/data
