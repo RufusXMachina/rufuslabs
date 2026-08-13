@@ -1,0 +1,15 @@
+services:
+  music-grabber:
+    image: g33kphr33k/musicgrabber:latest
+    container_name: music-grabber
+    ports:
+      - "8086:8080"
+    environment:
+      - TZ=America/Los_Angeles
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /opt/stacks/musicgrabber/config:/app/config
+      - /opt/stacks/musicgrabber/music:/music
+    restart: unless-stopped
+    shm_size: "2gb"
