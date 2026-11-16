@@ -8,20 +8,20 @@ services:
       - PGID=1000
       - TZ=America/Los_Angeles
       - VERSION=docker
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - ./config/plex:/config
-      - /mnt/media/data/media/Movies:/data/movies
-      - /mnt/media/data/media/TV:/data/tv
-      - /mnt/media/data/media/Adult:/data/adult
-      - /mnt/media/data/media/Music:/data/music
-      - /mnt/media/data/media/Comedy:/data/comedy
-      - /mnt/media/data/media/Anime:/data/anime
-      - /mnt/media/data/media/DVR_Recordings:/data/dvr
-      - /mnt/media/data/media/BathauerTV:/data/bathauertv
-      - /mnt/media/data/media/BathauerMovies:/data/bathauermovies
-      - /mnt/media/data/media/YouTube:/data/youtube
-      - ./xmltv:/data/xmltv:ro
+      - /mnt/media/data/movies:/data/movies
+      - /mnt/media/data/tv:/data/tv
+      - /mnt/media/data/music:/data/music
+      - /mnt/media/data/comedy:/data/comedy
+      - /mnt/media/data/anime:/data/anime
+      - /mnt/media/data/youtube:/data/youtube
+      - /mnt/media/data/personal:/data/personal
+      - ./transcode:/transcode
     restart: unless-stopped
+
   tautulli:
     image: ghcr.io/tautulli/tautulli:latest
     container_name: tautulli
@@ -29,9 +29,17 @@ services:
       - 8181:8181
     volumes:
       - ./config/tautulli:/config
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Los_Angeles
     restart: unless-stopped
-networks: {}
+    networks:
+      - media_network
+
+networks:
+  media_network:
+    external: true
