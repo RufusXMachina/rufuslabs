@@ -6,7 +6,7 @@
 [![Plex](https://img.shields.io/badge/Media-Plex%20Media%20Server-E5A00D?logo=plex&logoColor=white)](https://www.plex.tv/)
 [![Intel](https://img.shields.io/badge/Transcode-Intel%20QuickSync%20(VAAPI)-0071C5?logo=intel&logoColor=white)](https://www.intel.com/)
 
-A highly automated, containerized home infrastructure environment powering media streaming, live television broadcasting, home automation, automated content acquisition, and private cloud services.
+A highly automated, containerized home infrastructure environment powering media streaming, live television broadcasting, automated content management, and self-hosted cloud services.
 
 ---
 
@@ -23,67 +23,76 @@ flowchart TD
     subgraph Host["🖥️ Ubuntu Server Host (Computer)"]
         CFTunnel["Cloudflared Tunnel"]
         CF -->|Encrypted Tunnel| CFTunnel
-        
-        subgraph NetworkSec["Security & Routing"]
-            CFTunnel --> LocalApps["Local Web UI / Stacks"]
-            AdGuard["AdGuard / Pi-hole (Local DNS)"]
-        end
+        CFTunnel --> LocalApps["Internal Services & Web UIs"]
 
         subgraph MediaTier["🎬 Media & Entertainment"]
-            Plex["Plex Media Server (iGPU /dev/dri)"]
-            Jellyfin["Jellyfin"]
-            Tautulli["Tautulli (Monitoring)"]
-            Kometa["Kometa (Metadata)"]
+            Plex["Plex Media Server<br/>(iGPU /dev/dri QuickSync)"]
+            Tautulli["Tautulli (Monitoring & Stats)"]
+            Kometa["Kometa (Automated Overlays)"]
+            Seerr["Seerr (Media Requests)"]
+            Wizarr["Wizarr (User Onboarding)"]
+            Artwork["Artwork-Uploader"]
         end
 
         subgraph LiveTVTier["📺 Live TV Broadcast Pipeline"]
-            Tvheadend["Tvheadend (Mux / Adapter Pool)"]
+            Tvheadend["Tvheadend (Mux & Adapter Pool)"]
             Threadfin["Threadfin (Direct Stream Pass-Through)"]
             Tvheadend -->|MPEG-TS HTTP| Threadfin
             Threadfin -->|Direct Pass-Through| Plex
         end
 
-        subgraph ArrTier["🤖 Automation & Acquisition"]
+        subgraph ArrTier["🤖 Automation & Acquisition (*arr)"]
             Sonarr["Sonarr (TV)"]
             Radarr["Radarr (Movies)"]
             Prowlarr["Prowlarr (Indexers)"]
             Bazarr["Bazarr (Subtitles)"]
-            Autobrr["Autobrr"]
-            VPN["Gluetun VPN (Killswitch)"]
-            Qbit["QBittorrent (VPN-Routed)"]
-            SAB["SABnzbd (Usenet)"]
-            
+            Recyclarr["Recyclarr (TRaSH Guides)"]
+            Maintainerr["Maintainerr (Library Rules)"]
+            Cleanuparr["Cleanuparr (Torrent Cleanup)"]
+            Byparr["Byparr (Solver Bypass)"]
+            Chaptarr["Chaptarr"]
+            Hecklarr["Hecklarr"]
+
             Sonarr & Radarr --> Prowlarr
-            Sonarr & Radarr --> Qbit & SAB
+            Sonarr & Radarr --> Qbit & QbitPriv
+        end
+
+        subgraph VpnNet["🔒 Downloaders & VPN Isolation"]
+            VPN["Gluetun VPN (WireGuard Killswitch)"]
+            Qbit["QBittorrent (Public)"]
+            QbitPriv["QBittorrent (Private)"]
+            Syncthing["Syncthing (File Sync)"]
+            
             Qbit --- VPN
+            QbitPriv --- VPN
         end
 
-        subgraph CloudHome["☁️ Cloud & Home Automation"]
-            HA["Home Assistant"]
-            Vault["Vaultwarden"]
-            Nextcloud["Nextcloud"]
-            FreshRSS["FreshRSS"]
+        subgraph ReadingTier["📚 Books & Media Archival"]
+            Audiobookshelf["Audiobookshelf (Audiobooks & Podcasts)"]
+            Kavita["Kavita (Comics & E-Books)"]
+            Shelfmark["Shelfmark (Book Discovery)"]
+            MeTube["MeTube (yt-dlp Archival)"]
         end
 
-        subgraph ManagementTier["⚙️ Management & Health"]
-            Dockhand["Dockhand / Portainer"]
-            Dozzle["Dozzle (Log Viewer)"]
-            UptimeKuma["Uptime Kuma"]
-            Duplicati["Duplicati / Kopia"]
+        subgraph CloudMgmt["☁️ Cloud, Security & Management"]
+            Vault["Vaultwarden (Password Vault)"]
+            FreshRSS["FreshRSS (RSS Reader)"]
+            Dockhand["Dockhand (Container Orchestration)"]
+            Duplicati["Duplicati / Kopia (Backup Engine)"]
         end
     end
 
     subgraph LocalHardware["📡 Local Hardware & Tuners"]
-        HDHR["HDHomeRun FLEX 4K (OTA ATSC 1.0/3.0)"]
+        HDHR["HDHomeRun FLEX 4K<br/>(4 Tuners: ATSC 1.0 / ATSC 3.0)"]
         HDHR -->|RF 8VSB / ATSC| Tvheadend
     end
 
     subgraph StorageHierarchy["💾 Multi-Tier Storage"]
-        NVMe["Host NVMe SSD<br/>(OS, Docker Stacks, Transcode Cache)"]
+        NVMe["Host NVMe SSD<br/>(OS, Docker Volumes, Transcode Workspace)"]
         DAS["TerraMaster DAS (Direct Attached)<br/>(/mnt/media/data: Movies, TV, Anime, Music)"]
         NAS["Synology NAS (10.0.0.100)<br/>(Encrypted Deduplicated Backup Target)"]
         
-        Plex & ArrTier --> DAS
+        Plex & ArrTier & ReadingTier --> DAS
         Plex --> NVMe
         Duplicati -->|Scheduled Snapshots| NAS
     end
@@ -124,7 +133,7 @@ flowchart LR
 
 | Tier | Hardware / Device | Purpose & Configuration |
 | :--- | :--- | :--- |
-| **Computer** | Ubuntu Server x86_64 | Dedicated host running Docker Compose stacks |
+| **Computer** | Ubuntu Server x86_64 | Dedicated host running active Docker Compose stacks |
 | **GPU / Acceleration** | Intel UHD Graphics (QuickSync) | Hardware encoding/decoding via `/dev/dri` (HEVC/H.264/MPEG-2) |
 | **Active Storage** | TerraMaster DAS (Direct Attached) | Primary media repository mounted at `/mnt/media/data` (`tv`, `movies`, `music`, `anime`) |
 | **Fast Workspace** | High-Speed NVMe SSD | Host OS, Docker container volumes, database storage, and high-throughput transcode workspace |
@@ -135,16 +144,41 @@ flowchart LR
 
 ## 🗂️ Service Stack Directory
 
-All services run as modular Docker Compose stacks located in `/opt/stacks/<stack-name>/`:
+Only active, currently deployed services are listed below:
 
-| Category | Stacks & Key Services | Description |
+| Category | Container / Service | Role & Function |
 | :--- | :--- | :--- |
-| **Media & Entertainment** | `plex-stack`, `jellyfin`, `plex-companions` | Media servers, Tautulli statistics, Kometa automated artwork |
-| **Live TV & Broadcasting** | `tvheadend`, `threadfin`, `webgrabplus` | Broadcast tuner management, channel proxying, EPG aggregation |
-| **Automation & Downloaders** | `media-stack`, `vpn-stack`, `sabnzbd`, `autobrr`, `unpackerr` | Sonarr, Radarr, Prowlarr, Bazarr, Gluetun VPN killswitch, QBittorrent |
-| **Audiobooks & Reading** | `audiobookshelf`, `kavita`, `shelfmark`, `metube`, `youtarr` | Audiobooks, comics/ebooks, YouTube/audio archival |
-| **Cloud & Security** | `vaultwarden`, `nextcloud`, `freshrss`, `homeassistant`, `cloudflared` | Self-hosted password vault, personal cloud, RSS, smart home, Cloudflare tunnel |
-| **System & Observability** | `dockhand`, `dozzle`, `uptime-kuma`, `duplicati`, `backup` | Container orchestration, real-time log tailing, uptime checks, snapshot backups |
+| **Media & Streaming** | `plex` | Primary media server with Intel QuickSync hardware transcoding |
+| | `tautulli` | Monitoring, user activity tracking, and stream history analytics |
+| | `seerr` | User request management and automated discovery interface |
+| | `kometa` | Automated Plex collection management, metadata, and poster overlays |
+| | `wizarr` | Automated Plex user invitation and onboarding workflow |
+| | `artwork-uploader` | Custom media poster and background artwork ingestion |
+| **Live TV & Tuners** | `tvheadend` | HDHomeRun tuner multiplexer, mux routing, and hardware adapter pool |
+| | `threadfin` | M3U proxy bridging Tvheadend to Plex with zero-latency direct pass-through |
+| **Content Automation** | `sonarr` | Automated TV series tracking, grabbing, and file renaming |
+| | `radarr` | Automated movie library management, monitoring, and upgrades |
+| | `prowlarr` | Centralized indexer manager integrated with Sonarr and Radarr |
+| | `bazarr` | Automated subtitle search, synchronization, and downloading |
+| | `recyclarr` | Automated sync of TRaSH Guides quality profiles into Sonarr/Radarr |
+| | `maintainerr` | Rule-based automated media retention and disk cleanup |
+| | `cleanuparr` | Automated torrent cleanup and queue state management |
+| | `byparr` | Cloudflare / anti-bot challenge bypass proxy for indexers |
+| | `chaptarr` | Automated chapter marker extraction and media enhancement |
+| | `hecklarr` | Live comedy and specialty media event automation |
+| **Downloaders & VPN** | `gluetun` | Secure WireGuard VPN client with built-in DNS leak protection & killswitch |
+| | `qbittorrent` | General BitTorrent downloader isolated through Gluetun VPN |
+| | `qbittorrent-private` | Dedicated private-tracker BitTorrent instance routed through Gluetun |
+| | `syncthing` | Encrypted, continuous peer-to-peer file synchronization |
+| **Books & Archival** | `audiobookshelf` | Self-hosted audiobook and podcast server with multi-device sync |
+| | `kavita` | Fast, lightweight reader for comics, manga, and e-books |
+| | `shelfmark` | Book discovery and library integration |
+| | `metube` | Web-based yt-dlp frontend for on-demand video and audio archival |
+| **Cloud & Security** | `vaultwarden` | Lightweight, self-hosted Bitwarden-compatible password manager |
+| | `freshrss` | Self-hosted RSS feed aggregator and reader |
+| | `cloudflared` | Cloudflare Zero Trust tunnel for secure ingress without port forwarding |
+| **Management & Health** | `dockhand` | Web UI for Docker container, image, and stack orchestration |
+| | `duplicati` | Automated, encrypted snapshot backups to the Synology NAS |
 
 ---
 
