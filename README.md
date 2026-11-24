@@ -1,4 +1,4 @@
-# rufuslabs
+# Rufuslabs
 RufusXMachina Homelab
 ## 🏗 Architecture
 - **Compute:** Ubuntu Server
