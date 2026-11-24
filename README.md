@@ -44,6 +44,7 @@ flowchart TD
         subgraph ArrTier["🤖 Automation & Acquisition (*arr)"]
             Sonarr["Sonarr (TV)"]
             Radarr["Radarr (Movies)"]
+            Lidarr["Lidarr (Music)"]
             Prowlarr["Prowlarr (Indexers)"]
             Bazarr["Bazarr (Subtitles)"]
             Recyclarr["Recyclarr (TRaSH Guides)"]
@@ -53,8 +54,8 @@ flowchart TD
             Chaptarr["Chaptarr"]
             Hecklarr["Hecklarr"]
 
-            Sonarr & Radarr --> Prowlarr
-            Sonarr & Radarr --> Qbit & QbitPriv
+            Sonarr & Radarr & Lidarr --> Prowlarr
+            Sonarr & Radarr & Lidarr --> Qbit & QbitPriv
         end
 
         subgraph VpnNet["🔒 Downloaders & VPN Isolation"]
@@ -158,7 +159,8 @@ Only active, currently deployed services are listed below:
 | | `threadfin` | M3U proxy bridging Tvheadend to Plex with zero-latency direct pass-through |
 | **Content Automation** | `sonarr` | Automated TV series tracking, grabbing, and file renaming |
 | | `radarr` | Automated movie library management, monitoring, and upgrades |
-| | `prowlarr` | Centralized indexer manager integrated with Sonarr and Radarr |
+| | `lidarr` | Automated music library management, monitoring, and upgrades |
+| | `prowlarr` | Centralized indexer manager integrated with Sonarr, Radarr, and Lidarr |
 | | `bazarr` | Automated subtitle search, synchronization, and downloading |
 | | `recyclarr` | Automated sync of TRaSH Guides quality profiles into Sonarr/Radarr |
 | | `maintainerr` | Rule-based automated media retention and disk cleanup |
