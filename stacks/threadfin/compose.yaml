@@ -1,0 +1,13 @@
+services:
+  threadfin:
+    image: fyb3roptik/threadfin:latest
+    container_name: threadfin
+    env_file:
+      - /opt/stacks/common.env
+    ports:
+      # LAN-only binding (host firewall is off)
+      - 10.0.0.31:34400:34400
+    volumes:
+      - ./config:/home/threadfin/conf
+      - ./temp:/tmp/threadfin:rw
+    restart: unless-stopped

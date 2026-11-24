@@ -1,0 +1,18 @@
+services:
+  tvheadend:
+    image: lscr.io/linuxserver/tvheadend:latest
+    container_name: tvheadend
+    # Host networking is needed so tvheadend can discover the HDHomeRun by broadcast.
+    # --bindaddr keeps the web UI (9981) and HTSP (9982) on the LAN address only.
+    network_mode: host
+    env_file:
+      - /opt/stacks/common.env
+    environment:
+      - RUN_OPTS=--bindaddr 10.0.0.31
+    volumes:
+      - ./config:/config
+      - ./recordings:/recordings
+      - ./XMLTV:/XMLTV
+      - ./scripts:/scripts
+      - /mnt/media/data/tv:/data/tv
+    restart: unless-stopped
