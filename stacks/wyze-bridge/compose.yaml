@@ -1,0 +1,19 @@
+services:
+  wyze-bridge:
+    container_name: wyze-bridge
+    image: ghcr.io/itskiwi/wyze-tunnel:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - WYZE_EMAIL=${WYZE_EMAIL}
+      - WYZE_PASSWORD=${WYZE_PASSWORD}
+      - API_ID=${API_ID}
+      - API_KEY=${API_KEY}
+      - WB_AUTH=false
+      - RECORD_ALL=false
+      - ON_DEMAND=false
+      - RTSP_ENCRYPT=false
+      - MTX_HLSADDRESS=:8887
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./tokens:/tokens

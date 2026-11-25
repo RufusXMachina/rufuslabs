@@ -1,7 +1,22 @@
+# Secrets and Credentials
 .env
 *.secret
-config/
+*.token
+tokens/
+
+# Container runtime data and database directories
 data/
-.DS_Store
+db/
+*.db
+*.db-*
+recordings/
+clips/
+exports/
 tmp/
 *.log
+.DS_Store
+
+# Whitelist stack configs
+!stacks/**/config/
+!stacks/**/config/*.yml
+!stacks/**/config/*.conf

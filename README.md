@@ -181,6 +181,9 @@ Only active, currently deployed services are listed below:
 | | `freshrss` | Self-hosted RSS feed aggregator and reader |
 | | `homeassistant` | Open-source home automation platform and smart home device orchestrator |
 | | `cloudflared` | Cloudflare Zero Trust tunnel for secure ingress without port forwarding |
+| **NVR & Smart Security** | `frigate` | Real-time NVR with Intel UHD 630 OpenVINO AI object & motion detection (person, car, dog, cat) |
+| | `mosquitto` | Eclipse Mosquitto MQTT broker bridging Frigate detection events to Home Assistant |
+| | `wyze-bridge` | Low-latency local RTSP & WebRTC video bridge for Wyze Cam v3 |
 | **Management & Health** | `dockhand` | Web UI for Docker container, image, and stack orchestration |
 | | `duplicati` | Automated, encrypted snapshot backups to the Synology NAS |
 
