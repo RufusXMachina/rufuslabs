@@ -78,6 +78,7 @@ flowchart TD
         subgraph CloudMgmt["☁️ Cloud, Security & Management"]
             Vault["Vaultwarden (Password Vault)"]
             FreshRSS["FreshRSS (RSS Reader)"]
+            HomeAssistant["Home Assistant (Home Automation)"]
             Dockhand["Dockhand (Container Orchestration)"]
             Duplicati["Duplicati / Kopia (Backup Engine)"]
         end
@@ -178,6 +179,7 @@ Only active, currently deployed services are listed below:
 | | `metube` | Web-based yt-dlp frontend for on-demand video and audio archival |
 | **Cloud & Security** | `vaultwarden` | Lightweight, self-hosted Bitwarden-compatible password manager |
 | | `freshrss` | Self-hosted RSS feed aggregator and reader |
+| | `homeassistant` | Open-source home automation platform and smart home device orchestrator |
 | | `cloudflared` | Cloudflare Zero Trust tunnel for secure ingress without port forwarding |
 | **Management & Health** | `dockhand` | Web UI for Docker container, image, and stack orchestration |
 | | `duplicati` | Automated, encrypted snapshot backups to the Synology NAS |
